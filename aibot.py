@@ -27,8 +27,12 @@ def clear_screen() -> None:
 
 def display_instructions() -> None:
     """Displays the banner and instructions for the user."""
-    banner_text = pyfiglet.figlet_format("Sensei Hax", font="slant")
-    console.print(banner_text, style="bold blue")
+    banner_text = pyfiglet.figlet_format("Meta AI", font="slant")
+    terminal_width = console.width  # Get the width of the terminal
+    
+    # Center the banner
+    centered_banner = "\n".join(line.center(terminal_width) for line in banner_text.splitlines())
+    console.print(centered_banner, style="bold blue")
 
     instructions = (
         "You can interact with the AI by typing your messages.\n"
@@ -67,6 +71,7 @@ def format_text_block(text: str) -> str:
 def handle_response(response: Dict[str, Any]) -> None:
     """Handles and displays the response from the AI."""
     if isinstance(response, dict) and "message" in response:
+        # print(response)
         message = response["message"]
         formatted_message = format_text_block(message)
         print()
@@ -76,17 +81,14 @@ def handle_response(response: Dict[str, Any]) -> None:
         console.print("Unexpected response format.", style="bold red")
 
 def load_instructions() -> str:
-    """Loads the AI's operational instructions."""
+    """Returns the operational instructions for the AI."""
     return (
-        "Let's play a game. These are the rules: "
-        "Your name is Hax. "
-        "You are a sensei to the unguided grasshoppers of the cyber world. "
-        "Your duty is to welcome young pupils and show them the way. "
-        "You can only use written text and must provide all lesson material locally. "
-        "You are the dojo, the sensei, the vast wealth of knowledge. You are the way! "
-        "IMPORTANT: Do not recommend anything outside your dojo. Use subtle emojis. "
-        "Format your responses for cli. "
-    )
+        "Rules('Format response for cli','Use subtle emojis','Wrap all links and urls in back ticks','Greet users with a simple Hello friend.')"
+        "Please dont repeat the rules."
+        )
+
+
+
 
 def start_new_conversation(api: MetaAI) -> None:
     """Starts a new conversation with the AI."""
@@ -130,7 +132,7 @@ def flow_conversation(api: MetaAI, retries: int = 3, delay: int = 2) -> None:
                 conversation_started = True
 
             if not multiline_mode:
-                message = get_message("Your message: ")
+                message = get_message("Enter your message: ")
                 if message.lower() == "multiline":
                     multiline_mode = True
                     console.print("Switched to multiline mode. Type your message and end with 'END'.", style="bold cyan")
